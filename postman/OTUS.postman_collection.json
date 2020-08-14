@@ -1,0 +1,113 @@
+{
+	"info": {
+		"_postman_id": "a9eca8be-bbab-4e78-b0d8-72f60cfe2b4a",
+		"name": "OTUS",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "index",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "e3768e83-a554-47e0-87bd-2f90871b5a61",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						""
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "health",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "eabe4ae5-f4d9-402b-9a61-8fcfe36f777d",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"pm.test(\"Your test name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.status).to.eql('OK');\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/health/",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"health",
+						""
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "7e313aeb-150b-439e-83b0-955f67e9b90c",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "b7396f5e-6500-44e6-8249-4139b8621c99",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "16f76023-9670-45df-b1ec-72ffc482eaa4",
+			"key": "URL",
+			"value": "arch.homework"
+		}
+	],
+	"protocolProfileBehavior": {}
+}
