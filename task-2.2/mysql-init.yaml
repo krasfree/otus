@@ -1,0 +1,75 @@
+apiVersion: batch/v1
+kind: Job
+metadata:
+  name: "mysql-init"
+spec:
+  template:
+    metadata:
+      name: "mysql-init"
+    spec:
+      restartPolicy: Never
+      initContainers:
+        - name: check-db-ready
+          image: mysql:8.0
+          env:
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+          command:
+            - sh
+            - "-c"
+            - |
+              until mysqladmin ping -hmysql --silent;
+              do echo waiting for database; sleep 2; done;
+      containers:
+        - name: install-job
+          env:
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+            - name: MYSQL_BD
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: db
+          image: mysql:8.0
+          command:
+            - /bin/sh
+            - "-c"
+            - |
+              mysql --host=mysql -u$(MYSQL_USER) -p$(MYSQL_PASSWORD) <<'EOF'
+                CREATE DATABASE IF NOT EXISTS `$(MYSQL_BD)` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+              EOF
+        - name: create-schema-job
+          env:
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql
+                  key: mysql-root-password
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: host
+            - name: MYSQL_BD
+              valueFrom:
+                configMapKeyRef:
+                  name: mysql-config
+                  key: db
+          image: krasfree/otus:v2
+          command:
+            - /bin/sh
+            - "-c"
+            - |
+              php bin/app.php orm:schema-tool:create
+  backoffLimit: 1
+

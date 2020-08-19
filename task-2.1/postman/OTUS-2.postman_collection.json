@@ -1,0 +1,303 @@
+{
+	"info": {
+		"_postman_id": "3e9a5cf8-176c-47cf-be05-f0d61ef0c260",
+		"name": "OTUS-2",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "091e34e9-e597-48de-a96e-6c0e2fcab00d",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var jsonData =  pm.response.json();\r",
+							"pm.collectionVariables.set(\"userId\", jsonData[\"id\"]);\r",
+							"\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"username\",\r\n  \"firstName\": \"Ivan\",\r\n  \"lastName\": \"Ivanov\",\r\n  \"email\": \"ivan@ivanov.ivan\",\r\n  \"phone\": \"+70000000000\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/user",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"user"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{userId}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1b4821d4-e8e9-4d1f-98b9-51d98f326cf9",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check user id\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(parseInt(jsonData.id)).to.eql(pm.variables.get(\"userId\"));\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/user/{{userId}}",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{userId}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "0e383f85-9b80-44f9-9f26-d222d931b7ef",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"firstName\": \"Maxim\",\r\n  \"lastName\": \"Maximovich\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/user/{{userId}}",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{userId}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "57d3514a-3ce9-4783-9d38-22bb98e99e5b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Check first name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.firstName).to.eql(\"Maxim\");\r",
+							"});\r",
+							"\r",
+							"\r",
+							"pm.test(\"Check last name\", function () {\r",
+							"    var jsonData = pm.response.json();\r",
+							"    pm.expect(jsonData.lastName).to.eql(\"Maximovich\");\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/user/{{userId}}",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{userId}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "1674fec8-a3bb-4a6f-8ad1-8d0053706fe5",
+						"exec": [
+							"pm.test(\"Status code is 204\", function () {\r",
+							"    pm.response.to.have.status(204);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [],
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/user/{{userId}}",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user/{userId}",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "ba694214-e41d-4491-b320-d82cfb4987e3",
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n  \"username\": \"johndoe589\",\r\n  \"firstName\": \"John\",\r\n  \"lastName\": \"Doe\",\r\n  \"email\": \"sssss@sdoes.com\",\r\n  \"phone\": \"+71002003040\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{URL}}/otusapp/dmansurov/user/{{userId}}",
+					"protocol": "http",
+					"host": [
+						"{{URL}}"
+					],
+					"path": [
+						"otusapp",
+						"dmansurov",
+						"user",
+						"{{userId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "fc38ed5a-c906-4f5a-9bba-201317ef2374",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "9c91dc06-7add-4465-9006-499b5fdd88bd",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "eae9e2c8-07b5-44ac-802d-85c4cc2ef875",
+			"key": "URL",
+			"value": "arch.homework"
+		},
+		{
+			"id": "210110bd-63d9-4bed-b430-493935fe7ff5",
+			"key": "userId",
+			"value": 7
+		}
+	],
+	"protocolProfileBehavior": {}
+}

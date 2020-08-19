@@ -1,0 +1,14 @@
+fullnameOverride: mysql
+root:
+  password: "123456"
+replication:
+  enabled: false
+master:
+  persistence:
+    enabled: true
+    accessModes:
+      - ReadWriteOnce
+    size: 1Gi
+service:
+  type: NodePort
+  port: 3306
