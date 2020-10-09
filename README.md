@@ -19,4 +19,22 @@
 
 ``helm install myapp app/``
 
+## Task 5 (auth)
+
+- Создаем namespace
+
+``kubectl create namespace app``
+
+``kubectl config set-context --current --namespace=app``
+
+- Устанавливаем helm с auth сервисом
+
+``helm dependency build services/auth``
+
+``helm install auth services/auth -n app``
+
+- Устанавливаем helm с user сервисом
+
+``helm install user services/user -n app``
+
 

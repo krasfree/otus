@@ -1,0 +1,71 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Release.Name }}-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ .Release.Name }}-php
+  template:
+    metadata:
+      labels:
+        app: {{ .Release.Name }}-php
+    spec:
+      containers:
+        - name: nginx
+          image: nginx:1.17-alpine
+          volumeMounts:
+            - name: nginx-config-volume
+              mountPath: /etc/nginx/conf.d
+            - name: site-files
+              mountPath: /var/www/html
+          ports:
+            - name: web
+              containerPort: 80
+          livenessProbe:
+            httpGet:
+              port: 80
+              path: /
+            initialDelaySeconds: 10
+            periodSeconds: 5
+            timeoutSeconds: 2
+          readinessProbe:
+            httpGet:
+              port: 80
+              path: /health/
+            initialDelaySeconds: 5
+            periodSeconds: 5
+        - name: php-app
+          env:
+            - name: MYSQL_USER
+              value: root
+            - name: MYSQL_PASSWORD
+              value: "{{ .Values.mysql.root.password }}"
+            - name: MYSQL_HOST
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-db-config
+                  key: host
+            - name: MYSQL_BD
+              valueFrom:
+                configMapKeyRef:
+                  name: {{ .Release.Name }}-db-config
+                  key: db
+          image: "{{ .Values.image.repository }}:{{ .Chart.AppVersion }}"
+          volumeMounts:
+            - name: site-files
+              mountPath: /var/www/html
+          lifecycle:
+            postStart:
+              exec:
+                command: ["/bin/sh", "-c", "cp -r /app/. /var/www/html && chmod -R 777 /var/www/html/var/*"]
+      volumes:
+        - name: nginx-config-volume
+          configMap:
+            name: {{ .Release.Name }}-nginx-config
+            items:
+              - key: config
+                path: site.conf
+        - name: site-files
+          emptyDir: {}

@@ -1,0 +1,12 @@
+apiVersion: v2
+name: auth
+description: A Helm chart to Auth-service
+type: application
+version: 5.0.0
+appVersion: v5.0
+
+dependencies:
+  - name: mysql
+    repository: https://charts.bitnami.com/bitnami
+    version: 6.14.8
+    condition: mysql

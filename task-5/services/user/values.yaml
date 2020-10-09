@@ -1,0 +1,33 @@
+image:
+  repository: krasfree/otus
+
+config:
+  host: mysql
+  db: otus-test
+
+service:
+  type: NodePort
+  port: 9000
+  targetPort: 80
+
+ingress:
+  host: "arch.homework"
+  path: "/users($|/)(.*)"
+  auth: "http://auth-service.app.svc.cluster.local:8000/auth"
+
+mysql:
+  fullnameOverride: mysql
+  root:
+    password: "123456"
+  replication:
+    enabled: false
+  master:
+    persistence:
+      enabled: true
+      accessModes:
+        - ReadWriteOnce
+      size: 1Gi
+  service:
+    type: NodePort
+    port: 3306
+
