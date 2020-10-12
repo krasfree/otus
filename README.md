@@ -37,7 +37,7 @@
 
 ``kubectl create namespace myapp``
 
-``helm dependency build``
+``helm dependency build app``
 
 ``helm install myapp ./app -n myapp``
 
