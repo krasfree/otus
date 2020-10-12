@@ -19,6 +19,36 @@
 
 ``helm install myapp app/``
 
+## Task 3 (Prometheus, Grafana)
+
+- Устанавливаем prometheus-operator
+
+``kubectl create namespace monitoring``
+
+``helm install prom stable/prometheus-operator -f prometheus/prometheus.yaml -n monitoring``
+
+ - Отключаем ingress и устанавливаем свой, для сбора метрик
+ 
+ ``minikube addons disable ingress``
+ 
+ ``helm install nginx stable/nginx-ingress -f ingress/nginx-ingress.yaml -n monitoring --atomic``
+
+- Устанавливаем приложение
+
+``kubectl create namespace myapp``
+
+``helm install myapp ./app -n myapp``
+
+- Прокидываем порты для доступа к Prom. и Graf.
+
+``kubectl config set-context --current --namespace=monitoring``
+
+``kubectl port-forward service/prom-grafana 9000:80``
+
+``login: admin password: prom-operator``
+
+``kubectl port-forward service/prom-prometheus-operator-prometheus 9090``
+
 ## Task 5 (auth)
 
 - Создаем namespace
