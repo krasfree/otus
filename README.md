@@ -37,6 +37,8 @@
 
 ``kubectl create namespace myapp``
 
+``helm dependency build``
+
 ``helm install myapp ./app -n myapp``
 
 - Прокидываем порты для доступа к Prom. и Graf.
