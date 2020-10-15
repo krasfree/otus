@@ -69,4 +69,14 @@
 
 ``helm install user services/user -n app``
 
+## Task 7 (идемпотетность и коммутативность)
 
+- Создаем namespace
+
+``kubectl create namespace myapp``
+
+- Устанавливаем helm с order сервисом
+
+``helm dependency build app``
+
+``helm install app app -n myapp``

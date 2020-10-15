@@ -1,0 +1,494 @@
+{
+	"info": {
+		"_postman_id": "18652c5a-52a9-478b-97f1-e1d6866ab98d",
+		"name": "OTUS-7",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "/order",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "e1e992a7-c874-4ec4-8937-7e930f8ca87c",
+						"exec": [
+							"pm.collectionVariables.set(\"X-Request-Id\", pm.variables.replaceIn('{{$guid}}'));\r",
+							"pm.collectionVariables.set(\"userId\", pm.variables.replaceIn('{{$randomInt}}'));\r",
+							"pm.collectionVariables.set(\"productId\", pm.variables.replaceIn('{{$randomInt}}'));\r",
+							"pm.collectionVariables.set(\"productId2\", pm.variables.replaceIn('{{$randomInt}}'));\r",
+							"pm.collectionVariables.set(\"productPrice\", pm.variables.replaceIn('{{$randomInt}}'));\r",
+							"pm.collectionVariables.set(\"productPrice2\", pm.variables.replaceIn('{{$randomInt}}'));\r",
+							"pm.collectionVariables.set(\"shippingTo\", pm.variables.replaceIn('{{$randomStreetAddress}}'));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "20a7c475-dacc-4609-a4d0-2077c68883c8",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var jsonData =  pm.response.json();\r",
+							"pm.collectionVariables.set(\"orderId\", jsonData[\"id\"]);\r",
+							"pm.collectionVariables.set(\"messageId\", jsonData[\"messageId\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"value": "{{X-Request-Id}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": {{userId}},\r\n    \"products\": [\r\n        {\"id\": {{productId}}, \"price\": {{productPrice}}}, \r\n        {\"id\": {{productId2}}, \"price\": {{productPrice2}}}\r\n    ],\r\n    \"shippingTo\": \"{{shippingTo}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/order",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order/{orderId}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "573f5fcd-75cb-4755-93a8-8a2cd75eb14c",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "8f578038-fe8b-455d-b33b-820b7292a3d5",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/order/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"order",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/outbox/{messageId}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "df7d2fc7-be62-4948-a32d-790337a24610",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "0113dd71-4c92-44b8-8165-27bcf6154f5c",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/outbox/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"outbox",
+						"{{messageId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order (409 conflict)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "02ef85e5-fb91-4e1b-bb8d-c29df5759174",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "cca852b9-0d1b-47d8-8367-77ad5bf7b1e4",
+						"exec": [
+							"pm.test(\"Status code is 409\", function () {\r",
+							"    pm.response.to.have.status(409);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"type": "text",
+						"value": "{{X-Request-Id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": {{userId}},\r\n    \"products\": [\r\n        {\"id\": {{productId}}, \"price\": {{productPrice}}}, \r\n        {\"id\": {{productId2}}, \"price\": {{productPrice2}}}\r\n    ],\r\n    \"shippingTo\": \"{{shippingTo}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/order",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order (new request id)",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "2361b1aa-1c6f-4de4-95ca-c8f72ca5f926",
+						"exec": [
+							"pm.collectionVariables.set(\"X-Request-Id\", pm.variables.replaceIn('{{$guid}}'));"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "6e8953c7-70e3-42ff-b807-a6570e0ac1e8",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"var jsonData =  pm.response.json();\r",
+							"pm.collectionVariables.set(\"orderId\", jsonData[\"id\"]);\r",
+							"pm.collectionVariables.set(\"messageId\", jsonData[\"messageId\"]);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "X-Request-Id",
+						"type": "text",
+						"value": "{{X-Request-Id}}"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"userId\": {{userId}},\r\n    \"products\": [\r\n        {\"id\": {{productId}}, \"price\": {{productPrice}}}, \r\n        {\"id\": {{productId2}}, \"price\": {{productPrice2}}}\r\n    ],\r\n    \"shippingTo\": \"{{shippingTo}}\"\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/order",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"order"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/order/{orderId}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "bf91dc17-9de7-489a-8f8d-4a2af677934f",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "4fc20cd2-650f-4edf-8a42-8246a9055f89",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/order/{{orderId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"order",
+						"{{orderId}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "/outbox/{messageId}",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"id": "474a75ab-d8c2-4a9d-aebb-46ec64e090c6",
+						"exec": [
+							""
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "test",
+					"script": {
+						"id": "a75d0102-16e2-410d-adc2-4569c05ae4b0",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"protocolProfileBehavior": {
+				"disableBodyPruning": true
+			},
+			"request": {
+				"method": "GET",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "http://{{baseUrl}}/orders/outbox/{{messageId}}",
+					"protocol": "http",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"orders",
+						"outbox",
+						"{{messageId}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "2f1d4d53-5c0d-4e02-9bdf-2f60e4933a22",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "1af3b6f1-b2bc-44de-a866-2ed334d6e59f",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"id": "6346c67d-ce95-4a6f-a854-42feb23e2bb8",
+			"key": "X-Request-Id",
+			"value": "5a928997-e8a2-4466-97ce-ef6014be05de"
+		},
+		{
+			"id": "eec37b13-ef29-4465-8f86-e90f2d3b6e42",
+			"key": "baseUrl",
+			"value": "arch.homework"
+		},
+		{
+			"id": "cb871e3c-8de4-4007-a5cd-5f5feadc92e9",
+			"key": "userId",
+			"value": "372"
+		},
+		{
+			"id": "e0385298-c347-48e2-b48d-637b52ed6757",
+			"key": "productId",
+			"value": "404"
+		},
+		{
+			"id": "75980622-814a-40a7-9243-7e6329b75a51",
+			"key": "productId2",
+			"value": "241"
+		},
+		{
+			"id": "009a1499-2714-4542-a750-f7bec74ef0ab",
+			"key": "productPrice",
+			"value": "910"
+		},
+		{
+			"id": "43664c5e-ec56-4fc5-8e3f-3fa813ccb31f",
+			"key": "productPrice2",
+			"value": "149"
+		},
+		{
+			"id": "7790c6d4-11b0-4fc1-aed1-ad86677979ef",
+			"key": "messageId",
+			"value": 3
+		},
+		{
+			"id": "a69be90a-a4f3-4bb1-a0de-0c029c23e3c1",
+			"key": "shippingTo",
+			"value": "503 Gleason Wall"
+		},
+		{
+			"id": "4e724264-f3a0-47cc-9955-47f853aa9cf9",
+			"key": "orderId",
+			"value": 3
+		}
+	],
+	"protocolProfileBehavior": {}
+}
