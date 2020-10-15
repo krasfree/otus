@@ -69,7 +69,7 @@
 
 ``helm install user services/user -n app``
 
-## Task 7 (идемпотетность и коммутативность)
+## Task 7 (идемпотентность и коммутативность)
 
 - Создаем namespace
 
