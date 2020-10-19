@@ -6,14 +6,14 @@
 
 ## Event Collaboration
 
-![ec.png](Event Collaboration/sequence.png)
+![ec.png](EventCollaboration/sequence.png)
 
-[Описание ASYNC интерфейсов](Event Collaboration/asyncapi.yaml) (для просмотра воспользоваться  https://playground.asyncapi.io/ )
+[Описание ASYNC интерфейсов](EventCollaboration/asyncapi.yaml) (для просмотра воспользоваться  https://playground.asyncapi.io/ )
 
 ## Event Notifications
 
-![en.png](Event Notifications/sequence.png)
+![en.png](EventNotifications/sequence.png)
 
-[Описание ASYNC интерфейсов](Event Notifications/asyncapi.yaml) (для просмотра воспользоваться  https://playground.asyncapi.io/ )
+[Описание ASYNC интерфейсов](EventNotifications/asyncapi.yaml) (для просмотра воспользоваться  https://playground.asyncapi.io/ )
 
 [Описание REST интерфейcов]()
