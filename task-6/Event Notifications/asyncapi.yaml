@@ -1,0 +1,204 @@
+asyncapi: 2.0.0
+info:
+  title: Оформление заказа
+  version: '1.0.0'
+  description: |
+    Пример оформление заказа (Event Collaboration)
+defaultContentType: application/json
+channels:
+  gateway/RegistrationRequest:
+    publish:
+      message:
+        tags:
+          - name: user
+        name: RegistrationRequest
+        title: Регистрация пользователя
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            username:
+              type: string
+            firstName:
+              type: string
+            lastName:
+              type: string
+            email:
+              type: string
+            password:
+              type: string
+            address:
+              type: string
+          required:
+            - username
+            - password
+            - email
+        examples:
+          - payload:
+              username: 'ivan'
+              firstName: 'Иван'
+              lastName: 'Иванов'
+              email: 'ivan@ivan.com'
+              phone: '+700000000'
+              password: 'qwerty'
+              address: 'ул. Ленина 157 - 17'
+  user-service/UserCreated:
+    publish:
+      message:
+        tags:
+          - name: user
+        name: UserCreated
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+        examples:
+          - payload:
+              id: 12
+  gateway/OrderCreateRequest:
+    publish:
+      message:
+        tags:
+          - name: order
+        name: OrderCreateRequest
+        title: Оформление заказа
+        payload:
+          type: object
+          properties:
+            userid:
+              type: integer
+            address:
+              type: string
+            totalSum:
+              type: number
+            products:
+              type: array
+              items:
+                type: object
+                properties:
+                  id:
+                    type: integer
+                  name:
+                    type: string
+          required:
+            - userid
+            - address
+            - totalSum
+            - products
+        examples:
+          - payload:
+              userid: 12
+              address: 'ул. Ленина 157 - 17'
+              totalSum: 2000.2
+              products: [{'id':2, 'name':"Наименование"}]
+  gateway/OrderCreated:
+    publish:
+      message:
+        tags:
+          - name: order
+        name: OrderCreated
+        title: Заказ создан
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+        examples:
+          - payload:
+              id: 12
+  order-service/PaymentRequest:
+    publish:
+      message:
+        tags:
+          - name: bill
+        name: PaymentRequest
+        title: Запрос на оплату
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            userId:
+              type: integer
+            sum:
+              type: integer
+          required:
+            - orderId
+            - userId
+            - sum
+        examples:
+          - payload:
+              id: 12
+              orderId: 12
+              userId: 12
+              sum: 200
+  billing-service/PaymentSuccess:
+    publish:
+      message:
+        tags:
+          - name: bill
+        name: PaymentSuccess
+        title: Оплата произведена
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+        examples:
+          - payload:
+              id: 12
+  billing-service/PaymentFailed:
+    publish:
+      message:
+        tags:
+          - name: bill
+        name: PaymentFailed
+        title: Оплата не произведена
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+        examples:
+          - payload:
+              id: 12
+  order-service/OrderPayed:
+    publish:
+      message:
+        tags:
+          - name: order
+        name: OrderPayed
+        title: Заказ оплачен
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+        examples:
+          - payload:
+              id: 12
+  order-service/OrderFailed:
+    publish:
+      message:
+        tags:
+          - name: order
+        name: OrderFailed
+        title: Заказ не оплачен
+        payload:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+        examples:
+          - payload:
+              id: 12
