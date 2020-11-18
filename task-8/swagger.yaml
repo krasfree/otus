@@ -1,0 +1,1294 @@
+openapi: 3.0.1
+info:
+  title: Сервис каршернига
+  version: 1.0.0
+servers:
+  - url: /api/v1
+tags:
+  - name: Auth
+    description: Аутентификации/авторизации
+  - name: User
+    description: Пользователи
+  - name: Account
+    description: Счета
+  - name: Car
+    description: Автомобили
+  - name: Order
+    description: Заказы
+  - name: Notification
+    description: Уведомления
+paths:
+  /register:
+    post:
+      tags:
+        - Auth
+      summary: Регистрация пользователя
+      description: Регистрация пользователя.
+      operationId: registerUser
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '201':
+          description: Регистрация прошла успешно
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              example: 
+                id: 42
+        '400':
+          description: Некорректный запрос
+  '/login':
+    post:
+      tags:
+        - Auth
+      summary: Авторизация пользователя
+      description: Авторизовать пользователя в системе
+      operationId: authUser
+      responses:
+        '201':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true
+        '401':
+          description: Неуспешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: false
+  '/logout':
+    get:
+      tags:
+        - Auth
+      summary: Разлогинить пользователя
+      description: Разлогинить пользователя
+      operationId: authLogout
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true
+        '401':
+          description: Пользователь уже вышел
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: false       
+          
+  '/auth':
+    get:
+      tags:
+        - Auth
+      summary: Проверить пользователя
+      description: Проверить пользователя (межсервисный запрос)
+      operationId: checkAuth
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true
+        '401':
+          description: Пользователь не в системе
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: false       
+          
+  '/signin':
+    get:
+      tags:
+        - Auth
+      summary: Приветственная страница
+      description: Если пользователь не в системе, показываем приветственную страницу
+      operationId: authSignin
+      responses:
+        '401':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+                  message: 
+                    type: string
+              example: 
+                success: true 
+                message: Пожалуйста войдите в кабинет
+  
+  '/user/{userId}':
+    get:
+      tags:
+        - User
+      summary: Информация о пользователе
+      description: Информация о пользователе
+      operationId: userInfo
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 1
+                userName: ivan
+                firstName: Иван
+                lastName: Иванов
+                email: ivan@ivan.com
+                phone: '+700000000'
+        '403':
+          description: Нет доступа к данному пользователю/разделу
+        '400':
+          description: Неправильный запрос
+    put:
+      tags:
+        - User
+      summary: Обновление данных о пользователе
+      description: Обновление данных о пользователе
+      operationId: userUpdate
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '200': 
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true
+        '403':
+          description: Нет доступа к данному пользователю/разделу
+ 
+  '/admin/user/{userId}':
+    get:
+      tags:
+        - User
+      summary: Информация о пользователе
+      description: Информация о пользователе
+      operationId: userInfoAdmin
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+              example:
+                id: 1
+                userName: ivan
+                firstName: Иван
+                lastName: Иванов
+                email: ivan@ivan.com
+                roles: [1,2]
+                phone: '+700000000'
+        '403':
+          description: Нет доступа к данному пользователю/разделу
+        '404':
+          description: Пользователь не найден
+    put:
+      tags:
+        - User
+      summary: Обновление данных о пользователе
+      description: Обновление данных о пользователе
+      operationId: userUpdateAdmin
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/User'
+      responses:
+        '200': 
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true
+        '403':
+          description: Нет доступа к данному пользователю/разделу
+          
+  '/admin/user':
+    get:
+      tags:
+        - User
+      summary: Список пользователей
+      description: Список пользователей
+      operationId: userListAdmin
+      parameters:
+        - name: page
+          in: query
+          description: номер страницы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                    example:
+                      id: 1
+                      userName: ivan
+                      firstName: Иван
+                      lastName: Иванов
+                      email: ivan@ivan.com
+                      roles: [1,2]
+                      phone: '+700000000'
+                  pagination:
+                    type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                      totalPage:
+                        type: integer
+                    example:
+                      currentPage: 5
+                      totalPage: 10
+        '403':
+          description: Нет доступа к данному разделу
+
+  '/account/{userId}':
+    get:
+      tags:
+        - Account
+      summary: Счет пользователя
+      description: Счет пользователя
+      operationId: AccountUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+              example:
+                userId: 1
+                sum: 2000.2
+                limitCredit: 1000
+                status: Активный
+        '403':
+          description: Нет доступа к данному счету/разделу
+    put:
+      tags:
+        - Account
+      summary: Пополнить счет пользователя
+      description: Пополнить счет пользователя
+      operationId: Account
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sum:
+                  type: number
+              required: 
+                - sum
+            example: 
+              sum: 2000.2
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: false  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу
+          
+  '/admin/account/{userId}':
+    get:
+      tags:
+        - Account
+      summary: Счет пользователя
+      description: Счет пользователя
+      operationId: AccountAdminUser
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Account'
+              example:
+                userId: 1
+                sum: 2000.2
+                limitCredit: 1000
+                status: Активный
+        '403':
+          description: Нет доступа к данному счету/разделу
+    put:
+      tags:
+        - Account
+      summary: Пополнить счет пользователя
+      description: Пополнить счет пользователя
+      operationId: AccountAdmin
+      parameters:
+        - name: userId
+          in: path
+          description: ID пользователя
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                sum:
+                  type: number
+                statusId: 
+                  type: integer
+                  format: int64
+                limitCredit:
+                  type: number
+            example: 
+              statusId: 1
+              sum: 2000.5
+              limitCredit: 5000.5
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: false  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу
+  
+  '/admin/account':
+    get:
+      tags:
+        - Account
+      summary: Список счетов
+      description: Список счетов
+      operationId: AccountListAdmin
+      parameters:
+        - name: page
+          in: query
+          description: номер страницы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/User'
+                    example:
+                      userId: 1
+                      sum: 2000.2
+                      limitCredit: 1000
+                      status: Активный
+                  pagination:
+                    type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                      totalPage:
+                        type: integer
+                    example:
+                      currentPage: 5
+                      totalPage: 10
+        '403':
+          description: Нет доступа к данному счету/разделу
+
+  '/cars':
+    get:
+      tags:
+        - Car
+      summary: Список автомобилей
+      description: Список автомобилей
+      operationId: CarList
+      parameters:
+        - name: page
+          in: query
+          description: номер страницы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Car'
+                    example:
+                      id: 1
+                      model: Skoda Rapid
+                      color: белый
+                      status: 
+                        id: 1
+                        name: Свободен
+                      type:
+                        id: 1
+                        name: 
+                      rate:
+                        id: 1
+                        name: Бизнес
+                        cost: 20
+                  pagination:
+                    type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                      totalPage:
+                        type: integer
+                    example:
+                      currentPage: 5
+                      totalPage: 10
+        '403':
+          description: Нет доступа к данному разделу        
+
+  '/cars/{carId}':
+    get:
+      tags:
+        - Car
+      summary: Информация по автомобилю
+      description: Информация по автомобилю
+      operationId: CarDetail
+      parameters:
+        - name: carId
+          in: path
+          description: Идентификатор автомобиля
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+              example:
+                id: 1
+                model: Skoda Rapid
+                color: белый
+                status: 
+                  id: 1
+                  name: Свободен
+                type:
+                  id: 1
+                  name: 
+                rate:
+                  id: 1
+                  name: Бизнес
+                  cost: 200.2
+        '403':
+          description: Нет доступа к данному разделу           
+          
+  '/admin/cars/types':
+    get:
+      tags:
+        - Car
+      summary: Классы/Типы автомобилей
+      description: Классы/Типы автомобилей
+      operationId: CarTypeList
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Type'
+              example:
+                id: 1
+                name: B - класс
+        '403':
+          description: Нет доступа к данному разделу         
+  
+  
+  '/admin/cars/rates':
+    get:
+      tags:
+        - Car
+      summary: Тарифы на автомобили
+      description: Тарифы на автомобили
+      operationId: CarRateList
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Rate'
+              example:
+                id: 1
+                name: Эконом
+                cost: 10
+        '403':
+          description: Нет доступа к данному разделу            
+          
+  '/admin/cars':
+    get:
+      tags:
+        - Car
+      summary: Список автомобилей
+      description: Список автомобилей
+      operationId: CarListAdmin
+      parameters:
+        - name: page
+          in: query
+          description: номер страницы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Car'
+                    example:
+                      id: 1
+                      model: Skoda Rapid
+                      color: белый
+                      status: 
+                        id: 1
+                        name: Свободен
+                      type:
+                        id: 1
+                        name: 
+                      rate:
+                        id: 1
+                        name: Бизнес
+                        cost: 20
+                  pagination:
+                    type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                      totalPage:
+                        type: integer
+                    example:
+                      currentPage: 5
+                      totalPage: 10
+        '403':
+          description: Нет доступа к данному разделу        
+    post:
+      tags:
+        - Car
+      summary: Добавить автомобиль
+      description: Добавить автомобиль
+      operationId: CarAddAdmin
+      parameters:
+        - name: RequestId
+          in: header
+          description: GUID запроса
+          required: true
+          schema:
+            type: string    
+      requestBody:
+        $ref: '#/components/requestBodies/Car'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              example: 
+                id: 10  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу
+          
+          
+  '/admin/cars/{carId}':
+    get:
+      tags:
+        - Car
+      summary: Информация по автомобилю
+      description: Информация по автомобилю
+      operationId: CarDetailAdmin
+      parameters:
+        - name: carId
+          in: path
+          description: Идентификатор автомобиля
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Car'
+              example:
+                id: 1
+                model: Skoda Rapid
+                color: белый
+                status: 
+                  id: 1
+                  name: Свободен
+                type:
+                  id: 1
+                  name: 
+                rate:
+                  id: 1
+                  name: Бизнес
+                  cost: 200.2
+        '403':
+          description: Нет доступа к данному разделу        
+    put:
+      tags:
+        - Car
+      summary: Обновить данные по автомобилю
+      description: Обновить данные по автомобилю
+      operationId: CarUpdateAdmin
+      parameters:
+        - name: carId
+          in: path
+          description: Идентификатор автомобиля
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        $ref: '#/components/requestBodies/Car'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу
+    delete:
+      tags:
+        - Car
+      summary: Удалить автомобиль
+      description: Удалить автомобиль
+      operationId: CarDeleteAdmin
+      parameters:
+        - name: carId
+          in: path
+          description: Идентификатор автомобиля
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: Успешный запрос
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу      
+  
+  '/orders':
+    post:
+      tags:
+        - Order
+      summary: Старт аренды автомобиля
+      description: Старт аренды автомобиля
+      operationId: OrderCreate
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                carId:
+                  type: integer
+                  format: int64
+            example: 
+              carId: 10
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: integer
+              example: 
+                id: 222  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу
+          
+  '/orders/{orderId}':
+    get:
+      tags:
+        - Order
+      summary: Получить информацию по заказу
+      description: Получить информацию по заказу
+      operationId: OrderInfo
+      parameters:
+        - name: orderId
+          in: path
+          description: Идентификатор заказа
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                  $ref: '#/components/schemas/Order'
+              example: 
+                id: 1
+                userId: 1
+                carId: 1
+                statusId: 1
+                dateStart: 
+                  date: 2020-11-17 07:53:51.000000
+                  timezone_type: 3
+                  timezone: Europe/Moscow
+                dateEnd: 
+                  date: 2020-11-17 07:53:51.000000
+                  timezone_type: 3
+                  timezone: Europe/Moscow
+                dateLimit: 
+                  date: 2020-11-17 07:53:51.000000
+                  timezone_type: 3
+                  timezone: Europe/Moscow
+                total: 1000.5
+                reason:
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу
+                          
+  '/orders/{orderId}/completed':
+    get:
+      tags:
+        - Order
+      summary: Завершить аренду автомобиля
+      description: Завершить аренду автомобиля
+      operationId: OrderFinish
+      parameters:
+        - name: orderId
+          in: path
+          description: Идентификатор заказа
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу   
+          
+  '/orders/{orderId}/cancel':
+    put:
+      tags:
+        - Order
+      summary: Отмена аренды
+      description: Отмена аренды
+      operationId: OrderCancel
+      parameters:
+        - name: orderId
+          in: path
+          description: Идентификатор заказа
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+            example: 
+              reason: 'не заводится'
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  success:
+                    type: string
+              example: 
+                success: true  
+        '400':
+          description: Некорректный запрос
+        '403':
+          description: Нет доступа к данному счету/разделу          
+    
+  
+  '/admin/orders':
+    get:
+      tags:
+        - Order
+      summary: Список заказов
+      description:  Список заказов
+      operationId: OrderListAdmin
+      parameters:
+        - name: page
+          in: query
+          description: номер страницы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Order'
+                    example: 
+                      id: 1
+                      userId: 1
+                      carId: 1
+                      statusId: 1
+                      dateStart: 
+                        date: 2020-11-17 07:53:51.000000
+                        timezone_type: 3
+                        timezone: Europe/Moscow
+                      dateEnd: 
+                        date: 2020-11-17 07:53:51.000000
+                        timezone_type: 3
+                        timezone: Europe/Moscow
+                      dateLimit: 
+                        date: 2020-11-17 07:53:51.000000
+                        timezone_type: 3
+                        timezone: Europe/Moscow
+                      total: 1000.5
+                      reason:
+                  pagination:
+                    type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                      totalPage:
+                        type: integer
+                    example:
+                      currentPage: 5
+                      totalPage: 10
+        '403':
+          description: Нет доступа к данному разделу          
+          
+  '/admin/notification':
+    get:
+      tags:
+        - Notification
+      summary: Список уведомлений
+      description: Список уведомлений
+      operationId: NotificationListAdmin
+      parameters:
+        - name: page
+          in: query
+          description: номер страницы
+          required: false
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Успешный запрос
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  list:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/Notification'
+                    example:
+                      id: 1
+                      userId: 5
+                      email: email@email.email
+                      subject: Тема
+                      body: Тело письма
+                      date: '2020-11-09 18:01:05.000000'
+                  pagination:
+                    type: object
+                    properties:
+                      currentPage:
+                        type: integer
+                      totalPage:
+                        type: integer
+                    example:
+                      currentPage: 5
+                      totalPage: 10
+        '403':
+          description: Нет доступа к данному счету/разделу        
+          
+components:
+  schemas:
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        email:
+          type: string
+        userName:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        roles: 
+          type: array
+          items:
+            type: integer
+        password:
+          type: string
+        phone:
+          type: string
+      required: 
+          - username
+          - password
+          - email
+    Account: 
+      type: object 
+      properties:
+        userId: 
+          type: integer
+          format: int64
+        sum:
+          type: number
+        limitCredit: 
+          type: number
+        status: 
+          type: string
+    Notification:
+      type: object 
+      properties:
+        id: 
+          type: integer
+          format: int64
+        userId: 
+          type: integer
+          format: int64
+        email:
+          type: string
+        subject: 
+          type: string
+        body: 
+          type: string
+        date: 
+          type: object
+          properties:
+            date:
+              type: string
+            timezone_type:
+              type: integer
+              format: int64
+            timezone: 
+              type: integer
+              format: int64
+    Car: 
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        model:
+          type: string
+        color: 
+          type: string
+        status:
+          type: object
+          properties:
+            id:
+              type: integer
+              format: int64
+            name: 
+              type: string
+        type:
+            $ref: '#/components/schemas/Type'
+        rate:
+            $ref: '#/components/schemas/Rate'
+    Rate:
+      type: object
+      properties:
+        id: 
+          type: integer
+          format: int64
+        name: 
+          type: string
+        cost: 
+          type: number
+    Type:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        name: 
+          type: string  
+    Order:
+      type: object
+      properties:
+        id:
+          type: integer
+          format: int64
+        userId: 
+          type: string 
+          format: int64
+        carId:
+          type: string 
+          format: int64
+        dateStart:
+          type: object
+          properties:
+            date:
+              type: string
+            timezone_type:
+              type: integer
+              format: int64
+            timezone: 
+              type: integer
+              format: int64
+        dateEnd:
+          type: object
+          properties:
+            date:
+              type: string
+            timezone_type:
+              type: integer
+              format: int64
+            timezone: 
+              type: integer
+              format: int64
+        dateLimit:
+          type: object
+          properties:
+            date:
+              type: string
+            timezone_type:
+              type: integer
+              format: int64
+            timezone: 
+              type: integer
+              format: int64
+        total:
+          type: number
+        reason:
+          type: string
+          
+  requestBodies:
+    User:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/User'
+          examples:
+            sample-user:
+              summary: Пользователь
+              value:
+                userName: ivan
+                firstName: Иван
+                lastName: Иванов
+                email: ivan@ivan.com
+                phone: '+700000000'
+                password: 'qwerty'
+      description: Необходимые данные по пользователю
+      required: true
+    Car:
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Car'
+          examples:
+            sample-user:
+              summary: Пользователь
+              value:
+                typeId: 1
+                rateId: 2
+                model: Toyota RAV4
+                color: Белый
+                statusId: 1
+      description: Необходимые данные по автомобилю
+      required: true

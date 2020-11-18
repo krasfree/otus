@@ -1,0 +1,224 @@
+asyncapi: 2.0.0
+info:
+  title: Сервис каршеринга
+  version: 1.0.0
+  description: Сервис каршеринга
+channels:
+  user/UserCreated:
+    publish:
+      message:
+        $ref: '#/components/messages/User'
+  user/UserUpdated:
+    publish:
+      message:
+        $ref: '#/components/messages/User' 
+  user/GetUserInfo:
+    parameters:
+      queue:
+        schema:
+          type: string
+      userId:
+        schema:
+          type: integer
+    bindings:
+      amqp:
+        is: queue
+        queue:
+          exclusive: true
+    subscribe:
+      bindings:
+        amqp:
+          ack: true
+      message:
+        correlationId:
+          location: $message.header#/correlation_id
+        $ref: '#/components/messages/User'
+  account/UserCreated:
+    subscribe:
+      message:
+        $ref: '#/components/messages/User'   
+  account/AccountReplenished:
+    publish:
+      message:
+        $ref: '#/components/messages/Account'   
+  account/AccountNegative:
+    publish:
+      message:
+        $ref: '#/components/messages/Account'  
+  account/GetAccountInfo:
+      parameters:
+        queue:
+          schema:
+            type: string
+        userId:
+          schema:
+            type: integer
+      bindings:
+        amqp:
+          is: queue
+          queue:
+            exclusive: true
+      subscribe:
+        bindings:
+          amqp:
+            ack: true
+        message:
+          correlationId:
+            location: $message.header#/correlation_id
+          $ref: '#/components/messages/Account'
+  account/AccountWithdraw:
+      parameters:
+        queue:
+          schema:
+            type: string
+        userId:
+          schema:
+            type: integer
+        sum:
+          schema:
+            type: number
+      bindings:
+        amqp:
+          is: queue
+          queue:
+            exclusive: true
+      subscribe:
+        bindings:
+          amqp:
+            ack: true
+        message:
+          correlationId:
+            location: $message.header#/correlation_id
+          payload: 
+            type: object
+            properties:
+              message:
+                type: string
+  car/CarStatusSaga:
+    publish:
+      message:
+        $ref: '#/components/messages/Car'      
+  car/OrderCreatedSaga:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Order'  
+  car/OrderCanceled:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Order'  
+  car/OrderFinished:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Order'  
+  order/OrderCreatedSaga:
+    publish:
+      message:
+        $ref: '#/components/messages/Order'  
+  order/OrderCanceled:
+    publish:
+      message:
+        $ref: '#/components/messages/Order'  
+  order/OrderFinished:
+    publish:
+      message:
+        $ref: '#/components/messages/Order'        
+  order/OrderCritical:
+    publish:
+      message:
+        $ref: '#/components/messages/Order'         
+  order/CarStatusSaga:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Car'   
+  notification/UserCreated:
+    subscribe:
+      message:
+        $ref: '#/components/messages/User' 
+  notification/UserUpdated:
+    subscribe:
+      message:
+        $ref: '#/components/messages/User' 
+  notification/AccountReplenished:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Account' 
+  notification/AccountNegative:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Account' 
+  notification/OrderFinished:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Order'
+  notification/OrderCanceled:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Order'
+  notification/OrderCritical:
+    subscribe:
+      message:
+        $ref: '#/components/messages/Order'
+components:
+  messages:
+    User:
+      payload:
+        type: object
+        properties:
+          id:
+            type: integer
+            description: Идентификатор пользователя
+          email:
+            type: string
+            format: email
+            description: E-mail пользователя
+          userName:
+            type: string
+            description: Логин пользователя
+          firstName:
+            type: string
+            description: Имя пользователя
+          lastName:
+            type: string
+            description: Фамилия пользователя
+          roles:
+            type: array
+            description: Роли пользователя
+          phone:
+            type: string
+            description: Телефон
+    Account:
+      payload:
+        type: object
+        properties:
+          userId:
+            type: integer
+            description: Идентификатор пользователя
+          sum: 
+            type: number
+            description: Сумма
+    Order:
+      payload:
+        type: object
+        properties:
+          orderId:
+            type: integer
+            description: Идентификатор заказа
+          carId: 
+            type: integer
+            description: Идентификатор автомобиля
+          userId:
+            type: integer
+            description: Идентификатор пользователя
+    Car: 
+       payload:
+         type: object
+         properties:
+           orderId:
+             type: integer
+             description: Идентификатор заказа
+           carId:
+             type: integer
+             description: Идентификатор автомобиля
+           status:
+             type: string
+             description: Состояние автомобиля
